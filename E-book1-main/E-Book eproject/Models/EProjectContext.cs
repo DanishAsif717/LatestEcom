@@ -47,7 +47,7 @@ public partial class EProjectContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("data source=.;initial catalog=e-project;user id=sa;password=aptech; TrustServerCertificate=True");
+        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-A0HEMGG\\SQLEXPRESS;Initial Catalog=e-project;User ID=sa;Password=danish;Trust Server Certificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

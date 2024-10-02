@@ -1,35 +1,84 @@
 ﻿@model E_Book_eproject.Models.Order
 
 @{
-    ViewData["Title"] = "checkout";
+    ViewData["Title"] = "Checkout";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>checkout</h1>
-
-<h4>Order</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="checkout">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-          
-            <div class="form-group">
-                <label asp-for="DeliveryDistance" class="control-label"></label>
-                <input asp-for="DeliveryDistance" class="form-control" />
-                <span asp-validation-for="DeliveryDistance" class="text-danger"></span>
+<!-- Hero Section Start -->
+<div class="slider-area">
+    <div class="single-slider slider-height2 d-flex align-items-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="hero-cap text-center">
+                        <h2>Checkout</h2>
+                    </div>
+                </div>
             </div>
-           
-          
-          
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
+<!-- Hero Section End -->
+<!-- Checkout Form Section Start -->
+<section class="checkout_area section_padding">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h4 class="text-center mb-4">Order Information</h4>
+                <hr />
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+                <form asp-action="checkout">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+                    <!-- Delivery Distance Input -->
+                    <div class="form-group">
+                        <label asp-for="DeliveryDistance" class="control-label">Delivery Distance (in kilometers)</label>
+                        <input asp-for="DeliveryDistance" type="number" class="form-control" placeholder="Enter distance in km" min="0" step="0.1" />
+                        <span asp-validation-for="DeliveryDistance" class="text-danger"></span>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-group text-center">
+                        <input type="submit" value="Create Order" class="btn btn-primary btn-lg" />
+                    </div>
+                </form>
+
+                <!-- Back to List Link -->
+                <div class="text-center mt-4">
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Checkout Form Section End -->
+
+<style>
+    /* Custom Styles */
+    .checkout_area {
+        padding: 50px 0;
+    }
+
+    .hero-cap {
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+
+    .btn-lg {
+        padding: 10px 20px;
+        font-size: 18px;
+    }
+
+    /* Fix for button looking pressed */
+    input[type="submit"] {
+        box-shadow: none; /* Removes shadow to avoid pressed look */
+    }
+
+    /* Custom number input appearance */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>

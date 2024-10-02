@@ -21,6 +21,8 @@
     <link rel="stylesheet" href="~/User/assets/css/slick.css">
     <link rel="stylesheet" href="~/User/assets/css/nice-select.css">
     <link rel="stylesheet" href="~/User/assets/css/style.css">
+    <link href="~/assets/node_modules/toast-master/css/jquery.toast.css" rel="stylesheet">
+
 </head>
 
 <body>
@@ -70,7 +72,7 @@
                                     <li>
                                         <a href="#">Pages</a>
                                         <ul class="submenu">
-                                            <li><a href="login.html">Login</a></li>
+                                            <li><a asp-action="Login" asp-controller="Auth">Login</a></li>
                                             <li><a href="cart.html">Cart</a></li>
                                             <li><a href="elements.html">Element</a></li>
                                             <li><a href="confirmation.html">Confirmation</a></li>
@@ -243,7 +245,21 @@
     <!-- Jquery Plugins, main Jquery -->
     <script src="~/User/assets/js/plugins.js"></script>
     <script src="~/User/assets/js/main.js"></script>
-
+    <script src="~/assets/node_modules/toast-master/js/jquery.toast.js"></script>
+    <script>
+        $(document).ready(function () {
+            var successMessage = '@TempData["SuccessMessage"]';
+            if (successMessage) {
+                $.toast({
+                    heading: 'Success',
+                    text: successMessage,
+                    showHideTransition: 'slide',
+                    icon: 'success',
+                    position: 'top-right'
+                });
+            }
+        });
+    </script>
 </body>
 </html>
 

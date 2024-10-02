@@ -30,7 +30,7 @@ namespace E_Book_eproject.Controllers
                 db.Carts.Add(cart);
                 db.SaveChanges();
 
-                return RedirectToAction("CheckOuts");
+                return RedirectToAction("MyCart");
             }
             else
             {
@@ -38,22 +38,21 @@ namespace E_Book_eproject.Controllers
             }
 
         }
-
+                  
         public IActionResult Delete(int id)
         {
             var cart = db.Carts.Find(id);
 
-            // Check if the cart is found
             if (cart == null)
             {
-                // Optionally, return a custom error view or a redirect to an error page
                 return NotFound();  // or handle it based on your application's logic
             }
 
             db.Carts.Remove(cart);
             db.SaveChanges();
+            TempData["SuccessMessage"] = "Product successfully Remove!";
 
-            return RedirectToAction("Index"); // It's better to redirect instead of returning a view
+            return RedirectToAction("MyCart"); // It's better to redirect instead of returning a view
         }
 
 
@@ -101,74 +100,140 @@ namespace E_Book_eproject.Controllers
         // product details check out 
         [HttpPost]
         public IActionResult checkout(Order ord)
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.Sid);
+            if (userIdString != null)
             {
-                var UserId =User.FindFirstValue(ClaimTypes.Sid);
-                if (UserId != null) { 
-               
-                    int userId = Convert.ToInt32(UserId);
-                var data = db.Carts.Where(x=>x.UserId==userId).ToList();
+                int userId = Convert.ToInt32(userIdString);
+
+                // Fetch user's cart data
+                var cartItems = db.Carts.Where(x => x.UserId == userId).ToList();
+
+                // Generate random order number
                 const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-              
-                var ordernumber = new string(Enumerable.Repeat(chars, 8)
-                  .Select(s => s[_random.Next(s.Length)]).ToArray());
+                var orderNumber = new string(Enumerable.Repeat(chars, 8)
+                                              .Select(s => s[_random.Next(s.Length)]).ToArray());
 
-                int deliveryCharges = 0;
-                if(ord.DeliveryDistance < 3)
-                {
-                    deliveryCharges = 0;
+                // Calculate delivery charges based on distance
+                int deliveryCharges = (ord.DeliveryDistance < 3) ? 0 : (int)(ord.DeliveryDistance * 70);
 
-                }
-                else
-                {
-                    deliveryCharges = (int)(ord.DeliveryDistance * 70);
-                }
+                // Initialize total amount with delivery charges
                 decimal totalAmount = deliveryCharges;
-                foreach (var item in data)
+
+                // Calculate total amount from cart items
+                foreach (var item in cartItems)
                 {
-                    totalAmount = (decimal)(totalAmount + (item.Price * item.Quantity));
+                    var itemPrice = item.Price ?? 0; // Handle nullable Price
+                    var itemQuantity = item.Quantity ; // Handle nullable Quantity
 
-                    
-
-                    
+                    totalAmount += itemPrice * itemQuantity;
                 }
 
-
-                Order order=new Order()
+                // Create and save the order
+                Order newOrder = new Order()
                 {
-                   OrderNumber=ordernumber,
-                   TotalAmount=totalAmount,
-                   DeliveryDistance=ord.DeliveryDistance,
-                   CustomerId=userId,
-               
+                    OrderNumber = orderNumber,
+                    TotalAmount = totalAmount,
+                    DeliveryDistance = ord.DeliveryDistance,
+                    CustomerId = userId,
                 };
-               
-                var addOrder= db.Orders.Add(order); 
+
+                var addOrder = db.Orders.Add(newOrder);
                 db.SaveChanges();
 
-
-                foreach (var item in data)
+                // Add order details for each cart item
+                foreach (var item in cartItems)
                 {
-                    OrderDetail orderDetails = new OrderDetail()
+                    OrderDetail orderDetail = new OrderDetail()
                     {
-                        OrderId=addOrder.Entity.OrderId,
-                        ProductId=item.ProductId,
-                        Quantity=item.Quantity,
-                        UnitPrice= (decimal)item.Price,
-
+                        OrderId = addOrder.Entity.OrderId,
+                        ProductId = item.ProductId,
+                        Quantity = item.Quantity , // Handle nullable Quantity
+                        UnitPrice = item.Price ?? 0, // Handle nullable Price
                     };
 
-                    db.OrderDetails.Add(orderDetails);
-                    db.Carts.Remove(item);
-                    db.SaveChanges();
-
-
-
+                    db.OrderDetails.Add(orderDetail);
+                    db.Carts.Remove(item); // Remove cart item after saving the order details
                 }
 
+                // Save all changes at once
+                db.SaveChanges();
+            }
 
-            }
-                return RedirectToAction("Index", "Home");
-            }
+            return RedirectToAction("Index", "Home");
+        }
+
+
+
+        //public IActionResult checkout(Order ord)
+        //    {
+        //        var UserId =User.FindFirstValue(ClaimTypes.Sid);
+        //        if (UserId != null) { 
+
+        //            int userId = Convert.ToInt32(UserId);
+        //        var data = db.Carts.Where(x=>x.UserId==userId).ToList();
+        //        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+        //        var ordernumber = new string(Enumerable.Repeat(chars, 8)
+        //          .Select(s => s[_random.Next(s.Length)]).ToArray());
+
+        //        int deliveryCharges = 0;
+        //        if(ord.DeliveryDistance < 3)
+        //        {
+        //            deliveryCharges = 0;
+
+        //        }
+        //        else
+        //        {
+        //            deliveryCharges = (int)(ord.DeliveryDistance * 70);
+        //        }
+        //        decimal totalAmount = deliveryCharges;
+        //        foreach (var item in data)
+        //        {
+        //            totalAmount = (decimal)(totalAmount + (item.Price * item.Quantity));
+
+
+
+
+        //        }
+
+
+        //        Order order=new Order()
+        //        {
+        //           OrderNumber=ordernumber,
+        //           TotalAmount=totalAmount,
+        //           DeliveryDistance=ord.DeliveryDistance,
+        //           CustomerId=userId,
+
+        //        };
+
+        //        var addOrder= db.Orders.Add(order); 
+        //        db.SaveChanges();
+
+
+        //        foreach (var item in data)
+        //        {
+        //            OrderDetail orderDetails = new OrderDetail()
+        //            {
+        //                OrderId=addOrder.Entity.OrderId,
+        //                ProductId=item.ProductId,
+        //                Quantity=item.Quantity,
+        //                UnitPrice= (decimal)item.Price,
+
+        //            };
+
+        //            db.OrderDetails.Add(orderDetails);
+        //            db.Carts.Remove(item);
+        //            db.SaveChanges();
+
+
+
+        //        }
+
+
+        //    }
+        //        return RedirectToAction("Index", "Home");
+        //    }
 
 
     }

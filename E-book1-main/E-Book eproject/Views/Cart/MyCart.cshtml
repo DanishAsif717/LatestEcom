@@ -6,7 +6,7 @@
 }
 
 <!-- Hero Area Start-->
-<div class="slider-area ">
+<div class="slider-area">
     <div class="single-slider slider-height2 d-flex align-items-center">
         <div class="container">
             <div class="row">
@@ -19,8 +19,8 @@
         </div>
     </div>
 </div>
-<!--================Cart Area =================-->
-
+<!-- Hero Area End-->
+<!-- Cart Area Start-->
 <section class="cart_area section_padding">
     <div class="container">
         <div class="cart_inner">
@@ -33,17 +33,17 @@
                             <th scope="col">Quantity</th>
                             <th scope="col">Total</th>
                             <th scope="col">Delete</th>
-
                         </tr>
                     </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
                             <tr>
                                 <td>
                                     <div class="media">
                                         <div class="d-flex">
-                                            <img src="@item.Image"  />
+                                            <!-- Inline CSS to set image size -->
+                                            <img src="@item.Image" class="img-fluid" style="width: 100px; height: 100px;" alt="@item.Name" />
                                         </div>
                                         <div class="media-body">
                                             <p>@item.Name</p>
@@ -54,43 +54,36 @@
                                     <h5>@item.Price</h5>
                                 </td>
                                 <td>
-                                    <h5> @item.Quantity</h5>
-                                     @* div class="product_count">
-                                         <span class="input-number-decrement"> <i class="ti-minus"></i></span>
-                                         <input class="input-number"  type="text" value="1" min="0" max="10">
-                                         <span class="input-number-increment"> <i class="ti-plus"></i></span>
-                                     </div> *@
+                                    <h5>@item.Quantity</h5>
                                 </td>
                                 <td>
                                     <h5>@(item.Quantity * item.Price)</h5>
                                 </td>
                                 <td>
-
-                                    <form asp-action="Delete">
-                                        <input type="hidden"  />
-                                        <button type="button" class="btn btn-danger btn-sm">Delete</button>
+                                    <form asp-action="Delete" method="post">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="fa fa-trash"></i> 
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
-           @*  <tr>
-                <td>@item.Name</td>
-                <td>@item.Quantity</td>
-                <td>@item.Price</td>
-                <td>@item.Image</td>
-                <td>@(item.Quantity * item.Price)</td>
-            </tr> *@
-        }
-    </tbody>
-</table>
+                        }
+                    </tbody>
+                </table>
 
-<div>
-    <h4>Total Amount: @Model.Sum(i => i.Quantity * i.Price)</h4>
-</div>
-             </div>
-       </div>
-   </div>
+                <!-- Total Amount Section -->
+                <div>
+                    <h4>Total Amount: @Model.Sum(i => i.Quantity * i.Price)</h4>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
+<!-- Cart Area End-->
+<!-- Next Button -->
 <tr class="bottom_button">
     <td>
-        <a class="btn_1" asp-action="" asp-controller="">Next  </a>
+        <a class="btn_1" asp-action="checkout" >Next</a>
     </td>
+</tr>
