@@ -64,33 +64,61 @@ namespace E_Book_eproject.Controllers
             {
                 int UserId = Convert.ToInt32(userId);
 
-                // Joining Cart with Product using ProductId
+                // Joining Cart with Product using ProductId and removing duplicates by grouping
                 var cartItems = (from cart in db.Carts
                                  join product in db.Products
                                  on cart.ProductId equals product.Id
                                  where cart.UserId == UserId
+                                 group cart by new { product.Id, product.Name, product.Price, product.Image } into grouped
                                  select new CheckoutViewModel
                                  {
-                                     Id = cart.Id,
-                                     Quantity = cart.Quantity,
-                                     Name = product.Name,
-                                     Price = (int)product.Price,
-                                     Image = product.Image
-                                 });
+                                     Id = grouped.First().Id, 
+                                     Quantity = grouped.Sum(x => x.Quantity), // Sum quantities of duplicate products
+                                     Name = grouped.Key.Name,
+                                     Price = (int)grouped.Key.Price,
+                                     Image = grouped.Key.Image
+                                 }).ToList();
 
                 // Pass the data to the view
-                return View(cartItems.ToList());
+                return View(cartItems);
             }
             else
             {
                 return RedirectToAction("Login", "Auth");
             }
-
         }
+
         [Authorize (Roles ="User")]
-        public IActionResult checkout()
+        public IActionResult checkout(double? deliveryDistance)
         {
-            
+            // Set initial values
+            double total = 0;
+            double deliveryCharge = 0;
+            string message = "";
+
+            // Check if the delivery distance is provided
+            if (deliveryDistance.HasValue)
+            {
+                // First 3 km are free, charge for distance beyond 3 km
+                if (deliveryDistance.Value > 3)
+                {
+                    deliveryCharge = (deliveryDistance.Value - 3) * 10; // Example: $10 for each km beyond 3 km
+                    message = "First 3 kilometers are free. Additional charges apply for extra kilometers.";
+                }
+                else
+                {
+                    message = "Delivery is free for distances within 3 kilometers.";
+                }
+
+                // Calculate total cost (this can include other costs, like the product total)
+                total = deliveryCharge;     
+            }
+
+            // Pass the calculated data to the view using ViewBag
+            ViewBag.Total = total;
+            ViewBag.Message = message;
+            ViewBag.DeliveryDistance = deliveryDistance;
+
             return View();
         }
 
@@ -138,6 +166,7 @@ namespace E_Book_eproject.Controllers
                     CustomerId = userId,
                 };
 
+                
                 var addOrder = db.Orders.Add(newOrder);
                 db.SaveChanges();
 

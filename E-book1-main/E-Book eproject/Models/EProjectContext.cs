@@ -47,13 +47,13 @@ public partial class EProjectContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-A0HEMGG\\SQLEXPRESS;Initial Catalog=e-project;User ID=sa;Password=danish;Trust Server Certificate=True");
+        => optionsBuilder.UseSqlServer("data source=DESKTOP-A0HEMGG\\SQLEXPRESS;initial catalog=e-project;user id=sa;password=danish; TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Book>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Book__3214EC0784274C7D");
+            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC0704D2DF8B");
 
             entity.ToTable("Book");
 
@@ -83,7 +83,7 @@ public partial class EProjectContext : DbContext
 
         modelBuilder.Entity<Cart>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Cart__3214EC07C3874303");
+            entity.HasKey(e => e.Id).HasName("PK__Cart__3214EC07F343583F");
 
             entity.ToTable("Cart");
 
@@ -104,7 +104,7 @@ public partial class EProjectContext : DbContext
 
         modelBuilder.Entity<Category>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__category__3214EC07FD5293F9");
+            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC079D546D9F");
 
             entity.ToTable("category");
 
@@ -117,7 +117,7 @@ public partial class EProjectContext : DbContext
 
         modelBuilder.Entity<CdandDvd>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__CdandDvd__3214EC07FAD727A5");
+            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC07BC496814");
 
             entity.ToTable("CdandDvd");
 
@@ -147,9 +147,9 @@ public partial class EProjectContext : DbContext
 
         modelBuilder.Entity<Customer>(entity =>
         {
-            entity.HasKey(e => e.CustomerId).HasName("PK__Customer__A4AE64B8927BF951");
+            entity.HasKey(e => e.CustomerId).HasName("PK__Customer__A4AE64B8F9EF835B");
 
-            entity.HasIndex(e => e.Email, "UQ__Customer__A9D10534AFDB511B").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__Customer__A9D105346AE2CD4D").IsUnique();
 
             entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
             entity.Property(e => e.Address)
@@ -171,7 +171,7 @@ public partial class EProjectContext : DbContext
 
         modelBuilder.Entity<Faq>(entity =>
         {
-            entity.HasKey(e => e.Faqid).HasName("PK__FAQs__4B89D1E2AF2A77B3");
+            entity.HasKey(e => e.Faqid).HasName("PK__FAQs__4B89D1E27336B71C");
 
             entity.ToTable("FAQs");
 
@@ -182,7 +182,7 @@ public partial class EProjectContext : DbContext
 
         modelBuilder.Entity<FeedbackAndQuery>(entity =>
         {
-            entity.HasKey(e => e.FeedbackId).HasName("PK__Feedback__6A4BEDF666836CAF");
+            entity.HasKey(e => e.FeedbackId).HasName("PK__Feedback__6A4BEDF6D187333C");
 
             entity.Property(e => e.FeedbackId).HasColumnName("FeedbackID");
             entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
@@ -193,12 +193,12 @@ public partial class EProjectContext : DbContext
 
             entity.HasOne(d => d.Customer).WithMany(p => p.FeedbackAndQueries)
                 .HasForeignKey(d => d.CustomerId)
-                .HasConstraintName("FK__FeedbackA__Custo__4E88ABD4");
+                .HasConstraintName("FK__FeedbackA__Custo__5DCAEF64");
         });
 
         modelBuilder.Entity<Manufacturer>(entity =>
         {
-            entity.HasKey(e => e.ManufacturerId).HasName("PK__Manufact__357E5CA108473FA1");
+            entity.HasKey(e => e.ManufacturerId).HasName("PK__Manufact__357E5CA1422DE83C");
 
             entity.Property(e => e.ManufacturerId).HasColumnName("ManufacturerID");
             entity.Property(e => e.Acronym)
@@ -214,16 +214,14 @@ public partial class EProjectContext : DbContext
 
         modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(e => e.OrderId).HasName("PK__Orders__C3905BAFF7B94269");
+            entity.HasKey(e => e.OrderId).HasName("PK__Orders__C3905BAF298F7B05");
 
-            entity.HasIndex(e => e.OrderNumber, "UQ__Orders__CAC5E743820A967E").IsUnique();
+            entity.HasIndex(e => e.OrderNumber, "UQ__Orders__CAC5E7435432E5A9").IsUnique();
 
             entity.Property(e => e.OrderId).HasColumnName("OrderID");
             entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
             entity.Property(e => e.DeliveryDistance).HasColumnType("decimal(5, 2)");
-            entity.Property(e => e.OrderDate)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("date");
+            entity.Property(e => e.OrderDate).HasColumnType("date");
             entity.Property(e => e.OrderNumber)
                 .HasMaxLength(8)
                 .IsUnicode(false);
@@ -233,18 +231,17 @@ public partial class EProjectContext : DbContext
                 .HasDefaultValueSql("('pending')");
             entity.Property(e => e.Status)
                 .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasDefaultValueSql("('pending')");
+                .IsUnicode(false);
             entity.Property(e => e.TotalAmount).HasColumnType("decimal(10, 2)");
 
             entity.HasOne(d => d.Customer).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.CustomerId)
-                .HasConstraintName("FK_Orders_ToTable");
+                .HasConstraintName("FK__Orders__Customer__318258D2");
         });
 
         modelBuilder.Entity<OrderDetail>(entity =>
         {
-            entity.HasKey(e => e.OrderDetailId).HasName("PK__OrderDet__D3B9D30CD8430EA9");
+            entity.HasKey(e => e.OrderDetailId).HasName("PK__OrderDet__D3B9D30CC9AB6489");
 
             entity.Property(e => e.OrderDetailId).HasColumnName("OrderDetailID");
             entity.Property(e => e.OrderId).HasColumnName("OrderID");
@@ -253,12 +250,12 @@ public partial class EProjectContext : DbContext
 
             entity.HasOne(d => d.Order).WithMany(p => p.OrderDetails)
                 .HasForeignKey(d => d.OrderId)
-                .HasConstraintName("FK__OrderDeta__Order__4F7CD00D");
+                .HasConstraintName("FK__OrderDeta__Order__5EBF139D");
         });
 
         modelBuilder.Entity<Payment>(entity =>
         {
-            entity.HasKey(e => e.PaymentId).HasName("PK__Payments__9B556A58CE9E6980");
+            entity.HasKey(e => e.PaymentId).HasName("PK__Payments__9B556A58E6A41617");
 
             entity.Property(e => e.PaymentId).HasColumnName("PaymentID");
             entity.Property(e => e.Amount).HasColumnType("decimal(10, 2)");
@@ -273,12 +270,12 @@ public partial class EProjectContext : DbContext
 
             entity.HasOne(d => d.Order).WithMany(p => p.Payments)
                 .HasForeignKey(d => d.OrderId)
-                .HasConstraintName("FK__Payments__OrderI__5165187F");
+                .HasConstraintName("FK__Payments__OrderI__619B8048");
         });
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC07DED61851");
+            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC07DA71A2D8");
 
             entity.Property(e => e.Author).HasColumnName("author");
             entity.Property(e => e.CatId).HasColumnName("cat_id");
@@ -306,7 +303,7 @@ public partial class EProjectContext : DbContext
 
         modelBuilder.Entity<Stationary>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__stationa__3214EC07DCB529D4");
+            entity.HasKey(e => e.Id).HasName("PK__stationa__3214EC07BD4D6949");
 
             entity.ToTable("stationary");
 
@@ -328,7 +325,7 @@ public partial class EProjectContext : DbContext
 
         modelBuilder.Entity<SubCategory>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__SubCateg__3214EC0769E70BBE");
+            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC07C2FFD13C");
 
             entity.ToTable("SubCategory");
 
@@ -347,7 +344,7 @@ public partial class EProjectContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__user__3214EC0754C3EBED");
+            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC07F7F8AE06");
 
             entity.ToTable("user");
 

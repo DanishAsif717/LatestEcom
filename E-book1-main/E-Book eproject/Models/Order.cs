@@ -11,15 +11,15 @@ public partial class Order
 
     public int? CustomerId { get; set; }
 
-    public DateTime OrderDate { get; set; }
+    public DateTime? OrderDate { get; set; }
 
     public decimal? DeliveryDistance { get; set; }
 
-    public string Status { get; set; } = null!;
+    public string? Status { get; set; }
 
-    public decimal TotalAmount { get; set; }
+    public decimal? TotalAmount { get; set; }
 
-    public string PaymentStatus { get; set; } = null!;
+    public string? PaymentStatus { get; set; }
 
     public virtual User? Customer { get; set; }
 
